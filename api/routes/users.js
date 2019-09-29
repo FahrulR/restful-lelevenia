@@ -337,11 +337,7 @@ router.post('/resetPassword/:key',(req,res)=>{
       .then(hashedPassword => {
        data.password = hashedPassword
        data.save()
-       res.json({
-        status: 200,
-        error: false,
-        message: 'Successfully changed password'
-      })
+       res.send('Successfully changed password! You can login now on your device')
       })
     } else {
       res.status(404).json({
