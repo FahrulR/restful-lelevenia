@@ -291,7 +291,7 @@ router.post('/forgotPassword', (req,res) => {
         <p>Hey ${users.name || users.email},</p>
         <p>We heard that you lost your Lelevenia password. Sorry about that!</p>
         <p>But don’t worry! You can use the following link to reset your password:</p>
-        <p>https://restful-lelevenia.herokuapp.com/users/resetPassword/${token}</p>
+        <p>https://restful-lelevenia.herokuapp.com/users/resetPassword/${users.id}/${token}</p>
         <p>Do something outside today! </p>
         `
         const transporter = nodemailer.createTransport({
@@ -322,15 +322,15 @@ router.post('/forgotPassword', (req,res) => {
     })
 });
 
-router.get('/resetPassword/:key',(req,res)=>{
+router.get('/resetPassword/:id/:key',(req,res)=>{
   jwt.verify(req.params.key, process.env.JWT_KEY, (err, data) => {
    res.sendFile(path.join(app.rootPath + '/views/resetForm.html'))
   })
 })
 
 const BRCYPT_SALT_ROUNDS = 10;
-router.post('/resetPassword/:key',(req,res)=>{
-  User.findOne({email: req.body.email})
+router.post('/resetPassword/:id/:key',(req,res)=>{
+  User.findOne({_id: req.params.id})
   .then(data => {
     if (data) {
       bcrypt.hash(req.body.password, BRCYPT_SALT_ROUNDS)
