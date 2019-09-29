@@ -80,14 +80,14 @@ app.use((req, res, next) => {
   next(error);
 });
 
-// app.use((err, req, res, next) => {
-//   res.status(err.status || 500);
-//   res.json({
-//     error: {
-//       message: err.message
-//     }
-//   })
-// })
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      message: err.message
+    }
+  })
+})
 
 // module.exports.client = client
 module.exports.rootPath = __dirname
