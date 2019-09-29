@@ -4,6 +4,8 @@ const User = require('../models/user');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const app = require('../../app')
+const path = require('path')
 const multer = require('multer');
 const multerUploads = require('../middleware/multer').multerUploads;
 const dataUri = require('../middleware/multer').dataUri;
@@ -276,11 +278,22 @@ router.post('/forgotPassword', (req,res) => {
   }
   console.log(req.body.email);
   User.findOne({ email : req.body.email })
-    .then(users => {
+    .then(async users => {
       if(users === null) {
         console.log(' Email not in database ');
         res.json(' Email not in db ')
       }else {
+        const token = await jwt.sign(
+        {email: users.email},
+        process.env.JWT_KEY
+        )
+        const html = `
+        <p>Hey ${users.name || users.email},</p>
+        <p>We heard that you lost your Lelevenia password. Sorry about that!</p>
+        <p>But don’t worry! You can use the following link to reset your password:</p>
+        <a href='https:/restful-lelevenia.herokuapp.com/users/resetPassword/${token}'>Click Here</a>
+        <p>Do something outside today! </p>
+        `
         const transporter = nodemailer.createTransport({
           service : 'gmail',
           auth: {
@@ -293,7 +306,7 @@ router.post('/forgotPassword', (req,res) => {
           from : process.env.USER,
           to : `${users.email}`,
           subject: 'Link to reset password',
-          text: 'Ingin melihat passwordmu ? klik link berikut !\n'+`https://restful-lelevenia.herokuapp.com/users/resetPassword/${users._id}`     
+          html
         };
 
         transporter.sendMail(mailOptions,function(err,res){
@@ -309,33 +322,41 @@ router.post('/forgotPassword', (req,res) => {
     })
 });
 
+router.get('/resetPassword/:key',(req,res)=>{
+  jwt.verify(req.params.key, process.env.JWT_KEY, (err, data) => {
+   res.sendFile(path.join(app.rootPath + '/views/resetForm.html'))
+  })
+})
+
 const BRCYPT_SALT_ROUNDS = 10;
-router.get('/resetPassword/:id',(req,res)=>{
-  let id = req.params.id
-  User.findOne({ _id : id })
-    .then(users => {
-      if(users !== null) {
-        console.log('users exist in db');
-        bcrypt
-          .hash('USERLELEVANIA', BRCYPT_SALT_ROUNDS)
-          .then(hashedPassword => {
-            User.update({_id : id},{
-              password : hashedPassword
-            }).exec()
-            console.log(hashedPassword);
-          })
-          .then(()=>{
-            res.status(200).send(
-              {
-                status : 200,
-                NewPassword : 'USERLELEVANIA'
-              }
-            )
-          }) 
-      } else {
-          console.log('no users exist in db');
-          res.status(404).json('no users in db')
-      }
+router.post('/resetPassword/:key',(req,res)=>{
+  User.findOne({email: req.body.email})
+  .then(data => {
+    if (data) {
+      bcrypt.hash(req.body.password, BRCYPT_SALT_ROUNDS)
+      .then(hashedPassword => {
+       data.password = hashedPassword
+       data.save()
+       res.json({
+        status: 200,
+        error: false,
+        message: 'Successfully changed password'
+      })
+      })
+    } else {
+      res.status(404).json({
+        status: 404,
+        error: true,
+        message: 'Failed to change password, Email not found' 
+      })
+    }
+  })
+  .catch(err => {
+    res.status(400).json({
+      status: 400,
+      error: true,
+      message: err.message,
     })
+  })
 })
 module.exports = router;

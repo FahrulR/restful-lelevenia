@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Forgot Password Lelevenia</title>
+	<meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width">
+<style>
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+body { background-color: white; }
+form { max-width:420px; margin:50px auto; }
+
+.feedback-input {
+  color:black;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  font-size: 18px;
+  border-radius: 5px;
+  line-height: 22px;
+  background-color: transparent;
+  border:2px solid #FFA500;
+  transition: all 0.3s;
+  padding: 13px;
+  margin-bottom: 15px;
+  width:100%;
+  box-sizing: border-box;
+  outline:0;
+}
+
+.feedback-input:focus { border:2px solid #CC4949; }
+
+h2 {
+	justify-content: center;
+	text-align: center;
+	color: #FFA500;
+}
+[type="submit"] {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  width: 100%;
+  background:#FFA500;
+  border-radius:5px;
+  border:0;
+  cursor:pointer;
+  color:white;
+  font-size:24px;
+  padding-top:10px;
+  padding-bottom:10px;
+  transition: all 0.3s;
+  margin-top:-4px;
+  font-weight:700;
+}
+[type="submit"]:hover { background:#CC4949; }
+</style>
+</head>
+<body style="padding: 0; margin: 0">
+	<div style="margin-top: -20px; width: 100%; background-color: #FFA500; text-align: center">
+		<h3 style="color: white; padding: 10px">Lelevenia</h3>
+	</div>
+
+	<div style="display: flex; justify-content: center; align-items: center">
+		<div style="border: 1px solid gray; border-radius: 3px; padding: 30px; padding-top: 10px; box-sizing: border-box;">
+			<h2>Masukkan Password Baru Anda</h2>
+				  <form method="post">         
+				  <input name="email" type="email" class="feedback-input" placeholder="Email" required />
+				 <input type="password" id="password" name="password" class="feedback-input" onkeyup="check()" required placeholder="Password" />
+				 <input type="password" id="confirm_password" name="confirm_password" class="feedback-input" onkeyup="check()" placeholder="Confirm Password" />
+				 <span id='message' style="font-size: 20px; "></span>
+				 <br />	
+				 <input type="submit" id="submit" value="Submit" class="submit" />
+				</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		const check = () => {
+		  if (document.getElementById('password').value ==
+		    document.getElementById('confirm_password').value) {
+		    document.getElementById('message').style.color = 'green';
+		    document.getElementById('message').innerHTML = 'Password match';
+		    document.getElementById('submit').style.backgroundColor = '#FFA500';
+		    document.getElementById('submit').disabled = false;
+		  } else {
+		    document.getElementById('message').style.color = 'red';
+		    document.getElementById('message').innerHTML = 'Password does not match';
+		    document.getElementById('submit').style.backgroundColor = 'gray';
+		    document.getElementById('submit').disabled = true;
+		  }
+		}
+	</script>
+</body>
+</html>
