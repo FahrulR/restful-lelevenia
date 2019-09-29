@@ -291,7 +291,7 @@ router.post('/forgotPassword', (req,res) => {
         <p>Hey ${users.name || users.email},</p>
         <p>We heard that you lost your Lelevenia password. Sorry about that!</p>
         <p>But don’t worry! You can use the following link to reset your password:</p>
-        <a href='https:/restful-lelevenia.herokuapp.com/users/resetPassword/${token}'>Click Here</a>
+        <p>https:/restful-lelevenia.herokuapp.com/users/resetPassword/${token}</p>
         <p>Do something outside today! </p>
         `
         const transporter = nodemailer.createTransport({
